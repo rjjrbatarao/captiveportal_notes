@@ -210,6 +210,7 @@ ln -s /etc/nginx/sites-available/hotspot.conf /etc/nginx/sites-enabled/hotspot.c
 ```
 systemctl reload nginx
 ```
+### this is the login page
 ```
 sudo nano /usr/share/nginx/html/portal/index.php
 ```
@@ -257,6 +258,7 @@ sleep(5);
 <?php } ?>
 EOF
 ```
+### this is for ios popup compatibility
 ```
 sudo nano /usr/share/nginx/html/portal/hotspot.html
 ```
@@ -280,6 +282,7 @@ sudo cat << EOF > /usr/share/nginx/html/portal/hotspot.html
  -->
 EOF
 ```
+### this is for kicking user via /kick.php?ip=xx:xx:xx:xx
 ```
 sudo nano  /usr/share/nginx/html/portal/kick.php
 ```
