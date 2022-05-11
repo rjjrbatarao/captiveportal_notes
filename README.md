@@ -1,3 +1,4 @@
+# Basic POC of Captive Portal
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install hostapd
@@ -38,11 +39,11 @@ wmm_enabled=0
 EOF
 
 sudo nano /etc/default/hostapd
-# append this
+### append this
 DAEMON_CONF="/etc/hostapd/hostapd.conf"
 
 sudo nano /etc/sysctl.conf
-# uncomment this
+### uncomment this
 net.ipv4.ip_forward=1
 or 
 sudo echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
@@ -51,7 +52,7 @@ sudo echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 sudo apt-get install iptables-persistent conntrack nginx php php-common php-fpm
 
 sudo nano /etc/hosts
-# append this
+### append this
 192.168.24.1	hotspot.localnet
 ::1		localhost ip6-localhost ip6-loopback
 fe00::0		ip6-localnet
@@ -60,14 +61,14 @@ ff02::1		ip6-allnodes
 ff02::2		ip6-allrouters
 
 
-# Turn into root
+### Turn into root
 sudo -i
-# Flush all connections in the firewall
+### Flush all connections in the firewall
 iptables -F
-# Delete all chains in iptables
+### Delete all chains in iptables
 iptables -X
-# wlan0 is our wireless card. Replace with your second NIC if doing it from a server.
-# This will set up our structure
+### wlan0 is our wireless card. Replace with your second NIC if doing it from a server.
+### This will set up our structure
 iptables -t mangle -N wlan0_Trusted
 iptables -t mangle -N wlan0_Outgoing
 iptables -t mangle -N wlan0_Incoming
@@ -90,7 +91,7 @@ iptables -t nat -A wlan0_Internet -j wlan0_Unknown
 iptables -t nat -A wlan0_Unknown -j wlan0_AuthServers
 iptables -t nat -A wlan0_Unknown -j wlan0_Global
 iptables -t nat -A wlan0_Unknown -j wlan0_temp
-# forward new requests to this destination
+### forward new requests to this destination
 iptables -t nat -A wlan0_Unknown -p tcp --dport 80 -j DNAT --to-destination 192.168.24.1
 iptables -t filter -N wlan0_Internet
 iptables -t filter -N wlan0_AuthServers
@@ -104,40 +105,40 @@ iptables -t filter -A wlan0_Internet -o eth0 -p tcp --tcp-flags SYN,RST SYN -j T
 iptables -t filter -A wlan0_Internet -j wlan0_AuthServers
 iptables -t filter -A wlan0_AuthServers -d 192.168.24.1 -j ACCEPT
 iptables -t filter -A wlan0_Internet -j wlan0_Global
-# allow access to my website :)
+### allow access to my website :)
 iptables -t filter -A wlan0_Global -d andrewwippler.com -j ACCEPT
 #allow unrestricted access to packets marked with 0x2
 iptables -t filter -A wlan0_Internet -m mark --mark 0x2 -j wlan0_Known
 iptables -t filter -A wlan0_Known -d 0.0.0.0/0 -j ACCEPT
 iptables -t filter -A wlan0_Internet -j wlan0_Unknown
-# allow access to DNS and DHCP
-# This helps power users who have set their own DNS servers
+### allow access to DNS and DHCP
+### This helps power users who have set their own DNS servers
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p udp --dport 53 -j ACCEPT
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p tcp --dport 53 -j ACCEPT
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p udp --dport 67 -j ACCEPT
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p tcp --dport 67 -j ACCEPT
 iptables -t filter -A wlan0_Unknown -j REJECT --reject-with icmp-port-unreachable
-#allow forwarding of requests from anywhere to eth0/WAN
+### allow forwarding of requests from anywhere to eth0/WAN
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-#save our iptables
+### save our iptables
 iptables-save > /etc/iptables/rules.v4
 
-# Make the HTML Document Root
+### Make the HTML Document Root
 mkdir /usr/share/nginx/html/portal
 chown www-data:www-data /usr/share/nginx/html/portal
 chmod 755 /usr/share/nginx/html/portal
-# create the nginx hotspot.conf file
+### create the nginx hotspot.conf file
 cat << EOF > /etc/nginx/sites-available/hotspot.conf
 server {
-# Listening on IP Address.
-# This is the website iptables redirects to
+#Listening on IP Address.
+#This is the website iptables redirects to
 listen       80 default_server;
 root         /usr/share/nginx/html/portal;
 # For iOS
 if ($http_user_agent ~* (CaptiveNetworkSupport) ) {
 return 302 http://hotspot.localnet/hotspot.html;
 }
-# For others
+#For others
 location / {
 return 302 http://hotspot.localnet/;
 }
@@ -155,14 +156,14 @@ index index.html index.htm index.php;
 location / {
 try_files $uri $uri/ index.php;
 }
-# Pass all .php files onto a php-fpm/php-fcgi server.
+#Pass all .php files onto a php-fpm/php-fcgi server.
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/run/php/php7.4-fpm.sock;
     }
 }
 EOF
-# Enable the website and reload nginx
+### Enable the website and reload nginx
 ln -s /etc/nginx/sites-available/hotspot.conf /etc/nginx/sites-enabled/hotspot.conf
 systemctl reload nginx
 
@@ -270,7 +271,7 @@ EOF
 
 sudo nano /usr/bin/rmtrack
 
-#add this inside, using cat fails
+### add this inside, using cat fails
 /usr/sbin/conntrack -L \
   |grep $1 \
   |grep ESTAB \
@@ -282,7 +283,7 @@ sudo nano /usr/bin/rmtrack
 
 sudo visudo
 
-#append this
+### append this
 www-data ALL=NOPASSWD: /usr/sbin/arp
 www-data ALL=NOPASSWD: /usr/bin/rmtrack [0-9]*.[0-9]*.[0-9]*.[0-9]*
 www-data ALL=NOPASSWD: /sbin/iptables, /usr/bin/du
@@ -299,12 +300,12 @@ nginx -t
 
 
 ## GOTCHAS
-# Wifi not working
+### Wifi not working
 rfkill list all
 sudo rfkill unblock all
 sudo ip link set wlan0 up
 sudo iface wlan0 up
-
+    then
 sudo systemctl restart dnsmasq
 sudo systemctl restart hostapd
 
