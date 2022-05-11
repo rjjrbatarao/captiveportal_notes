@@ -387,4 +387,9 @@ sudo systemctl restart dnsmasq
 sudo systemctl restart hostapd
 ```
 
-
+## Sources
+* https://github.com/thgh/pilon
+* https://thepi.io/how-to-use-your-raspberry-pi-as-a-wireless-access-point/
+* https://andrewwippler.com/2016/03/11/wifi-captive-portal/
+* https://wiki.andybev.com/doku.php?id=using_iptables_and_php_to_create_a_captive_portal&s[]=rmtrack
+* https://projectzme.wordpress.com/2012/03/19/captive-portal-using-php-and-iptables-firewall-on-linux/
