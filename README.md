@@ -194,7 +194,7 @@ preg_match('/..:..:..:..:..:../',$mac , $matches);
 $mac2 = $matches[0];
 // Reconnect the device to the firewall
 exec("sudo rmtrack " . $_SERVER['REMOTE_ADDR']);
-$i = "sudo iptables -t mangle -A wlan0_Outgoing  -m mac --mac-source ".$_GET['mac']." -j MARK --set-mark 2";
+$i = "sudo iptables -t mangle -A wlan0_Outgoing  -m mac --mac-source ".$mac2." -j MARK --set-mark 2";
 exec($i);
 sleep(5);
 ?> <html>
@@ -310,21 +310,25 @@ www-data ALL=NOPASSWD: /sbin/iptables -t mangle -D wlan0_Outgoing  -m mac --mac-
 ```
 
 ## USEFUL CMD
+```
 sudo iptables -L -t mangle --line-numbers
 sudo /usr/bin/getusr
   sudo iptables -L -t mangle | GREP $1 
 nginx -t
-
+```
 
 ## GOTCHAS
 ### Wifi not working
+```
 rfkill list all
 sudo rfkill unblock all
 sudo ip link set wlan0 up
 sudo iface wlan0 up
+```
     then
+```
 sudo systemctl restart dnsmasq
 sudo systemctl restart hostapd
-
+```
 
 
