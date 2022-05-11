@@ -1,22 +1,26 @@
 # Basic POC of Captive Portal
+```
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install hostapd
 sudo apt-get install dnsmasq
 sudo systemctl stop hostapd
 sudo systemctl stop dnsmasq
+```
 
 sudo nano /etc/dhcpcd.conf
 ### append this
+```
 interface wlan0
 static ip_address=192.168.24.1/24
-
+```
 sudo systemctl daemon-reload && sudo systemctl restart dhcpcd
 
 sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
 sudo nano /etc/dnsmasq.conf 
 
 or
+```
 sudo cat << EOF > /etc/dnsmasq.conf
 bogus-priv
 server=/localnet/192.168.24.1
@@ -25,10 +29,11 @@ interface=wlan0
 domain=localnet
 dhcp-range=192.168.24.10,192.168.24.250,255.255.255.0,2h
 EOF
-
+```
 sudo nano /etc/hostapd/hostapd.conf
 
 or
+```
 sudo << EOF > /etc/dnsmasq.conf
 interface=wlan0
 ssid=MyOpenAP
@@ -37,7 +42,7 @@ channel=6
 auth_algs=1
 wmm_enabled=0
 EOF
-
+```
 sudo nano /etc/default/hostapd
 ### append this
 DAEMON_CONF="/etc/hostapd/hostapd.conf"
@@ -53,22 +58,24 @@ sudo apt-get install iptables-persistent conntrack nginx php php-common php-fpm
 
 sudo nano /etc/hosts
 ### append this
+```
 192.168.24.1	hotspot.localnet
 ::1		localhost ip6-localhost ip6-loopback
 fe00::0		ip6-localnet
 ff00::0		ip6-mcastprefix
 ff02::1		ip6-allnodes
 ff02::2		ip6-allrouters
+```
 
-
-### Turn into root
+```
+#Turn into root
 sudo -i
-### Flush all connections in the firewall
+#Flush all connections in the firewall
 iptables -F
-### Delete all chains in iptables
+#Delete all chains in iptables
 iptables -X
-### wlan0 is our wireless card. Replace with your second NIC if doing it from a server.
-### This will set up our structure
+#wlan0 is our wireless card. Replace with your second NIC if doing it from a server.
+#This will set up our structure
 iptables -t mangle -N wlan0_Trusted
 iptables -t mangle -N wlan0_Outgoing
 iptables -t mangle -N wlan0_Incoming
@@ -91,7 +98,7 @@ iptables -t nat -A wlan0_Internet -j wlan0_Unknown
 iptables -t nat -A wlan0_Unknown -j wlan0_AuthServers
 iptables -t nat -A wlan0_Unknown -j wlan0_Global
 iptables -t nat -A wlan0_Unknown -j wlan0_temp
-### forward new requests to this destination
+#forward new requests to this destination
 iptables -t nat -A wlan0_Unknown -p tcp --dport 80 -j DNAT --to-destination 192.168.24.1
 iptables -t filter -N wlan0_Internet
 iptables -t filter -N wlan0_AuthServers
@@ -105,29 +112,31 @@ iptables -t filter -A wlan0_Internet -o eth0 -p tcp --tcp-flags SYN,RST SYN -j T
 iptables -t filter -A wlan0_Internet -j wlan0_AuthServers
 iptables -t filter -A wlan0_AuthServers -d 192.168.24.1 -j ACCEPT
 iptables -t filter -A wlan0_Internet -j wlan0_Global
-### allow access to my website :)
+#allow access to my website :)
 iptables -t filter -A wlan0_Global -d andrewwippler.com -j ACCEPT
 #allow unrestricted access to packets marked with 0x2
 iptables -t filter -A wlan0_Internet -m mark --mark 0x2 -j wlan0_Known
 iptables -t filter -A wlan0_Known -d 0.0.0.0/0 -j ACCEPT
 iptables -t filter -A wlan0_Internet -j wlan0_Unknown
-### allow access to DNS and DHCP
-### This helps power users who have set their own DNS servers
+#allow access to DNS and DHCP
+#This helps power users who have set their own DNS servers
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p udp --dport 53 -j ACCEPT
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p tcp --dport 53 -j ACCEPT
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p udp --dport 67 -j ACCEPT
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p tcp --dport 67 -j ACCEPT
 iptables -t filter -A wlan0_Unknown -j REJECT --reject-with icmp-port-unreachable
-### allow forwarding of requests from anywhere to eth0/WAN
+#allow forwarding of requests from anywhere to eth0/WAN
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-### save our iptables
+#save our iptables
 iptables-save > /etc/iptables/rules.v4
+```
 
 ### Make the HTML Document Root
 mkdir /usr/share/nginx/html/portal
 chown www-data:www-data /usr/share/nginx/html/portal
 chmod 755 /usr/share/nginx/html/portal
 ### create the nginx hotspot.conf file
+```
 cat << EOF > /etc/nginx/sites-available/hotspot.conf
 server {
 #Listening on IP Address.
@@ -163,6 +172,8 @@ try_files $uri $uri/ index.php;
     }
 }
 EOF
+```
+
 ### Enable the website and reload nginx
 ln -s /etc/nginx/sites-available/hotspot.conf /etc/nginx/sites-enabled/hotspot.conf
 systemctl reload nginx
@@ -170,6 +181,7 @@ systemctl reload nginx
 sudo nano /usr/share/nginx/html/portal/index.php
 
 or
+```
 sudo cat << EOF > /usr/share/nginx/html/portal/index.php
 <!DOCTYPE html>
 <?php
@@ -211,9 +223,10 @@ sleep(5);
   </body> </html>
 <?php } ?>
 EOF
-
+```
 sudo nano /usr/share/nginx/html/portal/hotspot.html
 or
+```
 sudo cat << EOF > /usr/share/nginx/html/portal/hotspot.html
  <!--
  <?xml version="1.0" encoding="UTF-8"?>
@@ -231,9 +244,10 @@ sudo cat << EOF > /usr/share/nginx/html/portal/hotspot.html
  </WISPAccessGatewayParam>
  -->
 EOF
-
+```
 sudo nano  /usr/share/nginx/html/portal/kick.php
 or
+```
 sudo cat << EOF > /usr/share/nginx/html/portal/kick.php
 <?php
 // get the user IP address from the query string
@@ -268,10 +282,11 @@ echo exec("sudo rmtrack " . $ip); // remove their connection track if any
 echo "Kickin' successful.";
 ?>
 EOF
-
+```
 sudo nano /usr/bin/rmtrack
 
 ### add this inside, using cat fails
+```
 /usr/sbin/conntrack -L \
   |grep $1 \
   |grep ESTAB \
@@ -280,17 +295,19 @@ sudo nano /usr/bin/rmtrack
       "{ system(\"conntrack -D --orig-src $1 --orig-dst \" \
           substr(\$6,5) \" -p tcp --orig-port-src \" substr(\$7,7) \" \
           --orig-port-dst 80\"); }"
+```
 
 sudo visudo
 
 ### append this
+```
 www-data ALL=NOPASSWD: /usr/sbin/arp
 www-data ALL=NOPASSWD: /usr/bin/rmtrack [0-9]*.[0-9]*.[0-9]*.[0-9]*
 www-data ALL=NOPASSWD: /sbin/iptables, /usr/bin/du
 www-data ALL=NOPASSWD: /sbin/iptables -t mangle -L | grep ??\:??\:??\:??\:??\:??
 www-data ALL=NOPASSWD: /sbin/iptables -t mangle -A wlan0_Outgoing  -m mac --mac-source ??\:??\:??\:??\:??\:?? -j MARK --set-mark 2
 www-data ALL=NOPASSWD: /sbin/iptables -t mangle -D wlan0_Outgoing  -m mac --mac-source ??\:??\:??\:??\:??\:?? -j MARK --set-mark 2
-
+```
 
 ## USEFUL CMD
 sudo iptables -L -t mangle --line-numbers
