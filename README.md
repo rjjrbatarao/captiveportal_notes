@@ -9,18 +9,21 @@ sudo apt-get install dnsmasq
 sudo systemctl stop hostapd
 sudo systemctl stop dnsmasq
 ```
-
+```
 sudo nano /etc/dhcpcd.conf
+```
 ### append this
 ```
 interface wlan0
 static ip_address=192.168.24.1/24
 ```
+```
 sudo systemctl daemon-reload && sudo systemctl restart dhcpcd
-
+```
+```
 sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
 sudo nano /etc/dnsmasq.conf 
-
+```
 or
 ```
 sudo cat << EOF > /etc/dnsmasq.conf
@@ -32,8 +35,9 @@ domain=localnet
 dhcp-range=192.168.24.10,192.168.24.254,255.255.255.0,2h
 EOF
 ```
+```
 sudo nano /etc/hostapd/hostapd.conf
-
+```
 or
 ```
 sudo << EOF > /etc/dnsmasq.conf
@@ -45,11 +49,16 @@ auth_algs=1
 wmm_enabled=0
 EOF
 ```
+```
 sudo nano /etc/default/hostapd
+```
 ### append this
+```
 DAEMON_CONF="/etc/hostapd/hostapd.conf"
-
+```
+```
 sudo nano /etc/sysctl.conf
+```
 ### uncomment this
 ```
 net.ipv4.ip_forward=1
@@ -63,8 +72,9 @@ sudo echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 ```
 sudo apt-get install iptables-persistent conntrack nginx php php-common php-fpm
 ```
-
+```
 sudo nano /etc/hosts
+```
 ### append this
 ```
 192.168.24.1	hotspot.localnet
@@ -141,9 +151,11 @@ iptables-save > /etc/iptables/rules.v4
 ```
 
 ### Make the HTML Document Root
+```
 mkdir /usr/share/nginx/html/portal
 chown www-data:www-data /usr/share/nginx/html/portal
 chmod 755 /usr/share/nginx/html/portal
+```
 ### create the nginx hotspot.conf file
 ```
 cat << EOF > /etc/nginx/sites-available/hotspot.conf
@@ -184,10 +196,15 @@ EOF
 ```
 
 ### Enable the website and reload nginx
+```
 ln -s /etc/nginx/sites-available/hotspot.conf /etc/nginx/sites-enabled/hotspot.conf
+```
+```
 systemctl reload nginx
-
+```
+```
 sudo nano /usr/share/nginx/html/portal/index.php
+```
 or
 ```
 sudo cat << EOF > /usr/share/nginx/html/portal/index.php
@@ -232,7 +249,9 @@ sleep(5);
 <?php } ?>
 EOF
 ```
+```
 sudo nano /usr/share/nginx/html/portal/hotspot.html
+```
 or
 ```
 sudo cat << EOF > /usr/share/nginx/html/portal/hotspot.html
@@ -253,7 +272,9 @@ sudo cat << EOF > /usr/share/nginx/html/portal/hotspot.html
  -->
 EOF
 ```
+```
 sudo nano  /usr/share/nginx/html/portal/kick.php
+```
 or
 ```
 sudo cat << EOF > /usr/share/nginx/html/portal/kick.php
@@ -291,8 +312,9 @@ echo "Kickin' successful.";
 ?>
 EOF
 ```
+```
 sudo nano /usr/bin/rmtrack
-
+```
 ### add this inside, using cat fails
 ```
 /usr/sbin/conntrack -L \
@@ -304,9 +326,9 @@ sudo nano /usr/bin/rmtrack
           substr(\$6,5) \" -p tcp --orig-port-src \" substr(\$7,7) \" \
           --orig-port-dst 80\"); }"
 ```
-
+```
 sudo visudo
-
+```
 ### append this
 ```
 www-data ALL=NOPASSWD: /usr/sbin/arp
