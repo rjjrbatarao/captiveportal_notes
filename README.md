@@ -1,6 +1,6 @@
 # Basic POC of Captive Portal
 
-# PHASE 1
+## PHASE 1
 ```
 sudo apt-get update
 sudo apt-get upgrade
