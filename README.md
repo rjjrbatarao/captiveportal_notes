@@ -17,9 +17,12 @@ sudo nano /etc/dhcpcd.conf
 interface wlan0
 static ip_address=192.168.24.1/24
 ```
+then
 ```
 sudo systemctl daemon-reload && sudo systemctl restart dhcpcd
 ```
+
+
 ```
 sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
 sudo nano /etc/dnsmasq.conf 
@@ -35,6 +38,7 @@ domain=localnet
 dhcp-range=192.168.24.10,192.168.24.254,255.255.255.0,2h
 EOF
 ```
+
 ```
 sudo nano /etc/hostapd/hostapd.conf
 ```
@@ -49,6 +53,7 @@ auth_algs=1
 wmm_enabled=0
 EOF
 ```
+
 ```
 sudo nano /etc/default/hostapd
 ```
@@ -56,6 +61,7 @@ sudo nano /etc/default/hostapd
 ```
 DAEMON_CONF="/etc/hostapd/hostapd.conf"
 ```
+
 ```
 sudo nano /etc/sysctl.conf
 ```
