@@ -27,7 +27,7 @@ server=/localnet/192.168.24.1
 local=/localnet/
 interface=wlan0
 domain=localnet
-dhcp-range=192.168.24.10,192.168.24.250,255.255.255.0,2h
+dhcp-range=192.168.24.10,192.168.24.254,255.255.255.0,2h
 EOF
 ```
 sudo nano /etc/hostapd/hostapd.conf
