@@ -25,6 +25,8 @@ sudo systemctl daemon-reload && sudo systemctl restart dhcpcd
 
 ```
 sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+```
+```
 sudo nano /etc/dnsmasq.conf 
 ```
 or
