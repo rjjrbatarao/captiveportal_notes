@@ -100,6 +100,7 @@ iptables -t nat -A wlan0_Unknown -j wlan0_Global
 iptables -t nat -A wlan0_Unknown -j wlan0_temp
 #forward new requests to this destination
 iptables -t nat -A wlan0_Unknown -p tcp --dport 80 -j DNAT --to-destination 192.168.24.1
+iptables -t nat -A wlan0_Unknown -p tcp --dport 443 -j DNAT --to-destination 192.168.24.1
 iptables -t filter -N wlan0_Internet
 iptables -t filter -N wlan0_AuthServers
 iptables -t filter -N wlan0_Global
