@@ -320,6 +320,11 @@ echo "Kickin' successful.";
 ?>
 EOF
 ```
+### change ownership
+```
+sudo chown -R www-data:www-data /usr/share/nginx/html/portal/
+```
+
 ```
 sudo nano /usr/bin/rmtrack
 ```
@@ -334,6 +339,12 @@ sudo nano /usr/bin/rmtrack
           substr(\$6,5) \" -p tcp --orig-port-src \" substr(\$7,7) \" \
           --orig-port-dst 80\"); }"
 ```
+### make it executable
+```
+sudo chmod +x /usr/bin/rmtrack
+```
+
+
 ```
 sudo visudo
 ```
@@ -351,8 +362,12 @@ www-data ALL=NOPASSWD: /sbin/iptables -t mangle -D wlan0_Outgoing  -m mac --mac-
 ```
 sudo iptables -L -t mangle --line-numbers
 sudo /usr/bin/getusr
-  sudo iptables -L -t mangle | GREP $1 
+  sudo iptables -L -t mangle | GREP $1
+sudo chmod +x /usr/bin/getusr
 nginx -t
+ip a
+iptables -L
+iptables -S
 ```
 
 ## GOTCHAS
