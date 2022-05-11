@@ -6,7 +6,7 @@ sudo systemctl stop hostapd
 sudo systemctl stop dnsmasq
 
 sudo nano /etc/dhcpcd.conf
-# append this
+### append this
 interface wlan0
 static ip_address=192.168.24.1/24
 
