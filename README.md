@@ -46,7 +46,7 @@ sudo nano /etc/hostapd/hostapd.conf
 ```
 or
 ```
-sudo << EOF > /etc/dnsmasq.conf
+sudo << EOF > /etc/hostapd/hostapd.conf
 interface=wlan0
 ssid=MyOpenAP
 hw_mode=g
