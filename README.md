@@ -1,4 +1,6 @@
 # Basic POC of Captive Portal
+
+# PHASE 1
 ```
 sudo apt-get update
 sudo apt-get upgrade
@@ -49,12 +51,18 @@ DAEMON_CONF="/etc/hostapd/hostapd.conf"
 
 sudo nano /etc/sysctl.conf
 ### uncomment this
+```
 net.ipv4.ip_forward=1
+```
 or 
+```
 sudo echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+```
 
-
+## PHASE 2 
+```
 sudo apt-get install iptables-persistent conntrack nginx php php-common php-fpm
+```
 
 sudo nano /etc/hosts
 ### append this
@@ -180,7 +188,6 @@ ln -s /etc/nginx/sites-available/hotspot.conf /etc/nginx/sites-enabled/hotspot.c
 systemctl reload nginx
 
 sudo nano /usr/share/nginx/html/portal/index.php
-
 or
 ```
 sudo cat << EOF > /usr/share/nginx/html/portal/index.php
@@ -326,7 +333,7 @@ sudo rfkill unblock all
 sudo ip link set wlan0 up
 sudo iface wlan0 up
 ```
-    then
+then
 ```
 sudo systemctl restart dnsmasq
 sudo systemctl restart hostapd
