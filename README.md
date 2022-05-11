@@ -310,8 +310,8 @@ if( $mac === NULL) {
 print_r($matches);
 
 // Delete it from iptables bypassing rules entry.
-while( $chain = shell_exec("sudo iptables -t mangle -L | grep ".strtoupper($mac) ) !== NULL ) {
- echo  exec("sudo iptables -D internet -t mangle -m mac --mac-source ".strtoupper($mac)." -j RETURN");
+while( $chain = shell_exec("sudo iptables -t mangle -L | grep ".strtolower($mac) ) !== NULL ) {
+ echo  exec("sudo iptables -D internet -t mangle -m mac --mac-source ".strtolower($mac)." -j RETURN");
 }
 // Why in this while loop?
 // Users may have been logged through the portal several times. 
