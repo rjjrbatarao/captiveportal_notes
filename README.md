@@ -140,7 +140,7 @@ iptables -t filter -A wlan0_Internet -j wlan0_AuthServers
 iptables -t filter -A wlan0_AuthServers -d 192.168.24.1 -j ACCEPT
 iptables -t filter -A wlan0_Internet -j wlan0_Global
 #allow access to my website :)
-iptables -t filter -A wlan0_Global -d andrewwippler.com -j ACCEPT
+iptables -t filter -A wlan0_Global -d walledgardensite.com -j ACCEPT
 #allow unrestricted access to packets marked with 0x2
 iptables -t filter -A wlan0_Internet -m mark --mark 0x2 -j wlan0_Known
 iptables -t filter -A wlan0_Known -d 0.0.0.0/0 -j ACCEPT
@@ -170,35 +170,35 @@ cat << EOF > /etc/nginx/sites-available/hotspot.conf
 server {
 #Listening on IP Address.
 #This is the website iptables redirects to
-listen       80 default_server;
-root         /usr/share/nginx/html/portal;
+ listen       80 default_server;
+ root         /usr/share/nginx/html/portal;
 # For iOS
-if ($http_user_agent ~* (CaptiveNetworkSupport) ) {
-return 302 http://hotspot.localnet/hotspot.html;
-}
+ if ($http_user_agent ~* (CaptiveNetworkSupport) ) {
+  return 302 http://hotspot.localnet/hotspot.html;
+ }
 #For others
-location / {
-return 302 http://hotspot.localnet/;
-}
+ location / {
+  return 302 http://hotspot.localnet/;
+ }
 }
 upstream php {
 #this should match value of "listen" directive in php-fpm pool
-server unix:/tmp/php7.4-fpm.sock;
-server 127.0.0.1:9000;
+ server unix:/tmp/php7.4-fpm.sock;
+ server 127.0.0.1:9000;
 }
 server {
-listen       80;
-server_name  hotspot.localnet;
-root         /usr/share/nginx/html/portal;
-index index.html index.htm index.php;
-location / {
-try_files $uri $uri/ index.php;
-}
+ listen       80;
+ server_name  hotspot.localnet;
+ root         /usr/share/nginx/html/portal;
+ index index.html index.htm index.php;
+ location / {
+  try_files $uri $uri/ index.php;
+ }
 #Pass all .php files onto a php-fpm/php-fcgi server.
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/php7.4-fpm.sock;
-    }
+ location ~ \.php$ {
+   include snippets/fastcgi-php.conf;
+   fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+ }
 }
 EOF
 ```
