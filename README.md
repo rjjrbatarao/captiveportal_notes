@@ -145,6 +145,8 @@ iptables -t filter -A wlan0_Global -d walledgardensite.com -j ACCEPT
 iptables -t filter -A wlan0_Internet -m mark --mark 0x2 -j wlan0_Known
 iptables -t filter -A wlan0_Known -d 0.0.0.0/0 -j ACCEPT
 iptables -t filter -A wlan0_Internet -j wlan0_Unknown
+# attemp for vpn blocking
+iptables -A FORWARD -m state --state NEW,ESTABLISHED,RELATED -d wlan0_Unknown -j REJECT
 #allow access to DNS and DHCP
 #This helps power users who have set their own DNS servers
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p udp --dport 53 -j ACCEPT
