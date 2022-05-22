@@ -127,6 +127,9 @@ iptables -t nat -A wlan0_Unknown -j wlan0_temp
 #forward new requests to this destination
 iptables -t nat -A wlan0_Unknown -p tcp --dport 80 -j DNAT --to-destination 192.168.24.1
 iptables -t nat -A wlan0_Unknown -p tcp --dport 443 -j DNAT --to-destination 192.168.24.1
+# attemp for vpn blocking
+iptables -t nat -A wlan0_Unknown -p tcp --dport 1194 -j DNAT --to-destination 192.168.24.1
+iptables -t nat -A wlan0_Unknown -p udp --dport 1194 -j DNAT --to-destination 192.168.24.1
 iptables -t filter -N wlan0_Internet
 iptables -t filter -N wlan0_AuthServers
 iptables -t filter -N wlan0_Global
@@ -147,6 +150,7 @@ iptables -t filter -A wlan0_Known -d 0.0.0.0/0 -j ACCEPT
 iptables -t filter -A wlan0_Internet -j wlan0_Unknown
 # attemp for vpn blocking
 iptables -A FORWARD -m state --state NEW,ESTABLISHED,RELATED -d wlan0_Unknown -j REJECT
+iptables -A FORWARD -m state --state NEW,ESTABLISHED,RELATED -d wlan0_Internet -j REJECT
 #allow access to DNS and DHCP
 #This helps power users who have set their own DNS servers
 iptables -t filter -A wlan0_Unknown -d 0.0.0.0/0 -p udp --dport 53 -j ACCEPT
