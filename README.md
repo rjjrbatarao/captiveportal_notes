@@ -399,3 +399,4 @@ sudo systemctl restart hostapd
 * https://andrewwippler.com/2016/03/11/wifi-captive-portal/
 * https://wiki.andybev.com/doku.php?id=using_iptables_and_php_to_create_a_captive_portal&s[]=rmtrack
 * https://projectzme.wordpress.com/2012/03/19/captive-portal-using-php-and-iptables-firewall-on-linux/
+* https://www.raspberryconnect.com/projects/65-raspberrypi-hotspot-accesspoints/157-raspberry-pi-auto-wifi-hotspot-switch-internet
