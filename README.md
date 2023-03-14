@@ -401,3 +401,4 @@ sudo systemctl restart hostapd
 * https://projectzme.wordpress.com/2012/03/19/captive-portal-using-php-and-iptables-firewall-on-linux/
 * https://www.raspberryconnect.com/projects/65-raspberrypi-hotspot-accesspoints/157-raspberry-pi-auto-wifi-hotspot-switch-internet
 * https://making.pusher.com/per-ip-rate-limiting-with-iptables/
+* https://github.com/nikosft/captive-portal/blob/master/captive_portal.py
